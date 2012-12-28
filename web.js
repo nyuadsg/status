@@ -11,10 +11,9 @@ mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
+	// schema for users
+	var Project = require('./models/project');
 });
-
-// schema for users
-var Project = require('./models/project');
 
 // start app server
 var app = express();

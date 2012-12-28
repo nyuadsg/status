@@ -6,7 +6,14 @@ exports.update = function(req, res){
 		{update: new Date().getTime()},
 		{upsert: true},
 		function( err, project ) {
-			res.send(project.slug);
+			if( err )
+			{
+				res.send( 'error' );
+			}
+			else
+			{
+				res.send( 'good' );
+			}
 		}
 	);
 };
