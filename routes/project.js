@@ -10,3 +10,12 @@ exports.update = function(req, res){
 		}
 	);
 };
+
+exports.list = function(req, res){
+	Project.find({}, function(error, projects){
+		res.render("status", {
+			title: "RDC Projects",
+			projects: projects
+		});
+  });
+};

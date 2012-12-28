@@ -1,0 +1,10 @@
+extends layout
+
+block content
+	h1= title
+	p Here is the current status of all projects.
+	ul
+		each project in projects
+			li
+				h5= project.slug
+				h6= project.status

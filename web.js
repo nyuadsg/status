@@ -41,6 +41,7 @@ app.configure('development', function(){
 });
 
 // all routes
+app.get('/projects', project.list);
 app.get('/project/:slug/update', project.update);
 
 // start listening
