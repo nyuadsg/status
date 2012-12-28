@@ -5,8 +5,6 @@
 	    "express": "3.0.5",
 		"mongodb": "*",
 		"mongoose": "*",
-		"passport": "*",
-		"passport-google": "*",
 		"jade": "*",
 		"stylus": "*"
 	},

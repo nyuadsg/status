@@ -1,11 +1,9 @@
 // we need mongoose
 var mongoose = require('mongoose');
 
-var userSchema = mongoose.Schema({
-    netID: String,
-	openID: String
+var projectSchema = mongoose.Schema({
+    slug: String,
+	update: Number
 });
 
-console.log( 'hoim' );
-
-var User = module.exports = mongoose.model('User', userSchema);
+var Project = module.exports = mongoose.model('Project', projectSchema);
