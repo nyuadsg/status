@@ -42,7 +42,7 @@ app.configure('development', function(){
 // all routes
 app.get('/', project.list);
 app.get('/projects', project.list);
-app.get('/project/:slug/update', project.update);
+app.post('/project/:slug/update', project.update);
 
 // start listening
 var port = process.env.PORT || 5000;
