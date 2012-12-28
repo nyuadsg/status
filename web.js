@@ -28,8 +28,8 @@ app.configure(function(){
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
-	app.use(express.cookieParser( process.env.secret ));
-	app.use(express.session({ secret: process.env.secret }));
+	app.use(express.cookieParser( process.env.SECRET ));
+	app.use(express.session({ secret: process.env.SECRET }));
 	app.use(app.router);
 	app.use(require('stylus').middleware(__dirname + '/public'));
 	app.use(express.static(__dirname + '/public'));
