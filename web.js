@@ -41,6 +41,7 @@ app.configure('development', function(){
 });
 
 // all routes
+app.get('/', project.list);
 app.get('/projects', project.list);
 app.get('/project/:slug/update', project.update);
 
