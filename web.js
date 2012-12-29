@@ -44,6 +44,69 @@ app.get('/', project.list);
 app.get('/projects', project.list);
 app.post('/project/:slug/update', project.update);
 
+// oauth
+passport.use(new GoogleStrategy({
+	returnURL: process.env.base_url + '/auth/google/return',
+	realm: process.env.base_url
+  },
+  function(identifier, profile, done) {
+	// ensure they are actually an NYU user
+	var valid = false;
+	var pattern=/(\w+)@nyu.edu/i;
+	
+	for (var i=0; i<profile.emails.length; i++)
+	{
+		// address is from NYU
+		match = profile.emails[i].value.match(pattern);
+				
+		if( match != null )
+		{			
+			netID = match[1];
+			valid = true;
+		}
+	}
+	if( valid )
+	{
+		User.findOne({ netID: netID }, function (err, user) {
+			if( user == null ) 
+			{
+				var user = new User({
+					netID: netID,
+					openID: identifier
+				});
+				user.save(function() {
+					done(err, user);
+				});
+			}
+			else
+			{
+				if( user.openID == identifier )
+				{
+					done(err, user);
+				}
+				else
+				{
+					done( null, false );
+				}
+			}
+			
+		});
+		
+	}
+	else
+	{
+		done( null, false );
+	}
+  }
+));
+
+// google auth
+app.get('/auth/google', passport.authenticate('google')); // Redirect the user to Google for authentication
+app.get('/auth/google/return', passport.authenticate('google', {
+	successRedirect: '/auth/finish',
+	failureRedirect: '/auth/fail'
+})); // finish the Google auth loop
+
 // start listening
 var port = process.env.PORT || 5000;
 app.listen(port, function() {

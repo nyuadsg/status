@@ -6,7 +6,9 @@
 		"mongodb": "*",
 		"mongoose": "3.5.3",
 		"jade": "*",
-		"stylus": "*"
+		"stylus": "*",
+		"passport": "*",
+		"passport-google": "*"
 	},
 	"engines": {
 		"node": "0.8.x",
