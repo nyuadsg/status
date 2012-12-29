@@ -55,9 +55,9 @@ passport.use('nyu-passport', new OAuth2Strategy({
 	callbackURL: process.env.BASE_URL + '/auth/provider/callback'
 	},
 	function(accessToken, refreshToken, profile, done) {
-		console.log( accessToken, refreshToken, profile );
+		console.log( accessToken, profile );
 	}
-));
+)); // zMMFz4HuUtxJu6i24ZQ4gp6PDp8kQ5IN6b2LNHzZ3nQ115rEH9jkZryqZvQyfzZlFWsjXAD7JHrG0p81O9Xg38QxVfRY7jUHc1YMdiCGsfERSXGCFJsatiPEnxXt7qfluVWN4Pdc9OsxqNplKq8PdebyD8eZOL7K2g3vVu3Oc64Mkr6pzTs0VmnqjTOJNgVBugoOPTKZDyzjZ8wMr6i3IlCeTUNUzTNEEs1TIwktAruXPAXAQsrrUpLD0GzdZg4e
 
 // google auth
 app.get('/auth/provider', passport.authenticate('nyu-passport'));
