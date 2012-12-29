@@ -30,7 +30,7 @@ app.configure(function(){
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
 	app.use(express.cookieParser( process.env.SECRET ));
-	app.use(express.session({ secret: process.env.SECRET }));
+	app.use(express.session({ key: 'status.sess', secret: process.env.SECRET }));
 	app.use(app.router);
 	app.use(require('stylus').middleware(__dirname + '/public'));
 	app.use(express.static(__dirname + '/public'));
@@ -48,15 +48,15 @@ app.post('/project/:slug/update', project.update);
 
 // oauth
 passport.use('nyu-passport', new OAuth2Strategy({
-    authorizationURL: 'http://localhost:9080/visa/oauth/authorize',
-    tokenURL: 'http://localhost:9080/visa/oauth/token',
-    clientID: 'abc123',
-    clientSecret: 'ssh-secret',
+	authorizationURL: 'http://localhost:9080/visa/oauth/authorize',
+	tokenURL: 'http://localhost:9080/visa/oauth/token',
+	clientID: 'abc123',
+	clientSecret: 'ssh-secret',
 	callbackURL: process.env.BASE_URL + '/auth/provider/callback'
-  },
-  function(accessToken, refreshToken, profile, done) {
-	console.log( accessToken, refreshToken, profile );
-  }
+	},
+	function(accessToken, refreshToken, profile, done) {
+		console.log( accessToken, refreshToken, profile );
+	}
 ));
 
 // google auth
@@ -67,8 +67,7 @@ app.get('/auth/provider', passport.authenticate('nyu-passport'));
 // token.  If authorization was granted, the user will be logged in.
 // Otherwise, authentication has failed.
 app.get('/auth/provider/callback', 
-	passport.authenticate('nyu-passport', { successRedirect: '/',
-                                      failureRedirect: '/login' }));
+	passport.authenticate('nyu-passport', { successRedirect: '/', failureRedirect: '/login' }));
 
 // start listening
 var port = process.env.PORT || 5000;
