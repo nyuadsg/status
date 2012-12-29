@@ -3,6 +3,8 @@ var express = require('express')
 	, http = require('http')
 	, path = require('path');
 var project = require('./routes/project');
+var passport = require('passport')
+  , OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 
 // prepare database
 var mongoose = require('mongoose');
@@ -45,67 +47,28 @@ app.get('/projects', project.list);
 app.post('/project/:slug/update', project.update);
 
 // oauth
-passport.use(new GoogleStrategy({
-	returnURL: process.env.base_url + '/auth/google/return',
-	realm: process.env.base_url
+passport.use('nyu-passport', new OAuth2Strategy({
+    authorizationURL: 'http://localhost:9080/visa/oauth/authorize',
+    tokenURL: 'http://localhost:9080/visa/oauth/token',
+    clientID: 'abc123',
+    clientSecret: 'ssh-secret',
+	callbackURL: process.env.BASE_URL + '/auth/provider/callback'
   },
-  function(identifier, profile, done) {
-	// ensure they are actually an NYU user
-	var valid = false;
-	var pattern=/(\w+)@nyu.edu/i;
-	
-	for (var i=0; i<profile.emails.length; i++)
-	{
-		// address is from NYU
-		match = profile.emails[i].value.match(pattern);
-				
-		if( match != null )
-		{			
-			netID = match[1];
-			valid = true;
-		}
-	}
-	if( valid )
-	{
-		User.findOne({ netID: netID }, function (err, user) {
-			if( user == null ) 
-			{
-				var user = new User({
-					netID: netID,
-					openID: identifier
-				});
-				user.save(function() {
-					done(err, user);
-				});
-			}
-			else
-			{
-				if( user.openID == identifier )
-				{
-					done(err, user);
-				}
-				else
-				{
-					done( null, false );
-				}
-			}
-			
-		});
-		
-	}
-	else
-	{
-		done( null, false );
-	}
+  function(accessToken, refreshToken, profile, done) {
+	console.log( accessToken, refreshToken, profile );
   }
 ));
 
 // google auth
-app.get('/auth/google', passport.authenticate('google')); // Redirect the user to Google for authentication
-app.get('/auth/google/return', passport.authenticate('google', {
-	successRedirect: '/auth/finish',
-	failureRedirect: '/auth/fail'
-})); // finish the Google auth loop
+app.get('/auth/provider', passport.authenticate('nyu-passport'));
+
+// The OAuth 2.0 provider has redirected the user back to the application.
+// Finish the authentication process by attempting to obtain an access
+// token.  If authorization was granted, the user will be logged in.
+// Otherwise, authentication has failed.
+app.get('/auth/provider/callback', 
+	passport.authenticate('nyu-passport', { successRedirect: '/',
+                                      failureRedirect: '/login' }));
 
 // start listening
 var port = process.env.PORT || 5000;

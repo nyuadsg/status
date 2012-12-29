@@ -8,7 +8,8 @@
 		"jade": "*",
 		"stylus": "*",
 		"passport": "*",
-		"passport-google": "*"
+		"passport-google": "*",
+		"passport-oauth": "*"
 	},
 	"engines": {
 		"node": "0.8.x",
