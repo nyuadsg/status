@@ -8,7 +8,7 @@ var passport = require('passport')
 
 OAuth2Strategy.prototype.userProfile = function(accessToken, done) {
 	done( null, {} );
-	this._oauth2.get('http://localhost:9080/visa/use/info/me', accessToken, function (err, body, res) {
+	this._oauth2.get('http://passport.sgnyuad.ompo.us/visa/use/info/me', accessToken, function (err, body, res) {
 		if (err) { return done(err); }
 
 		try {
@@ -66,6 +66,7 @@ app.configure('development', function(){
 // all routes
 app.get('/', project.list);
 app.get('/projects', project.list);
+app.get('/projects/edit', project.edit);
 app.post('/project/:slug/update', project.update);
 
 // authentication with passport
@@ -79,8 +80,8 @@ passport.deserializeUser(function(token, done) {
 
 // oauth
 passport.use('nyu-passport', new OAuth2Strategy({
-	authorizationURL: 'http://localhost:9080/visa/oauth/authorize',
-	tokenURL: 'http://localhost:9080/visa/oauth/token',
+	authorizationURL: 'http://passport.sgnyuad.ompo.us/visa/oauth/authorize',
+	tokenURL: 'http://passport.sgnyuad.ompo.us/visa/oauth/token',
 	clientID: process.env.PASSPORT_ID,
 	clientSecret: process.env.PASSPORT_SECRET,
 	callbackURL: process.env.BASE_URL + '/auth/provider/callback'

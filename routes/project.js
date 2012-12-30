@@ -26,3 +26,7 @@ exports.list = function(req, res){
 		});
   });
 };
+
+exports.edit = function( req, res ) {
+	res.send( req.user );
+}
