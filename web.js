@@ -4,27 +4,7 @@ var express = require('express')
 	, path = require('path');
 var project = require('./routes/project');
 var passport = require('passport')
-  , OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
-
-OAuth2Strategy.prototype.userProfile = function(accessToken, done) {
-	done( null, {} );
-	this._oauth2.get('http://passport.sgnyuad.ompo.us/visa/use/info/me', accessToken, function (err, body, res) {
-		if (err) { return done(err); }
-
-		try {
-			var json = JSON.parse(body);
-						
-			var profile = { netID: json.netID };
-
-			profile._raw = body;
-			profile._json = json;
-
-			done(null, profile);
-		} catch(e) {
-			done(e);
-		}
-	});
-}
+  , NYUPassportStrategy = require('passport-nyu').Strategy;
 
 // prepare database
 var mongoose = require('mongoose');
@@ -79,14 +59,13 @@ passport.deserializeUser(function(token, done) {
 });
 
 // oauth
-passport.use('nyu-passport', new OAuth2Strategy({
-	authorizationURL: 'http://passport.sgnyuad.ompo.us/visa/oauth/authorize',
-	tokenURL: 'http://passport.sgnyuad.ompo.us/visa/oauth/token',
+passport.use('nyu-passport', new NYUPassportStrategy({
 	clientID: process.env.PASSPORT_ID,
 	clientSecret: process.env.PASSPORT_SECRET,
 	callbackURL: process.env.BASE_URL + '/auth/provider/callback'
 	},
 	function(accessToken, refreshToken, profile, done) {
+		console.log( profile );
 		user = {
 			token: accessToken,
 			netID: profile.netID

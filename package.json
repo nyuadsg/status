@@ -9,7 +9,7 @@
 		"stylus": "*",
 		"passport": "*",
 		"passport-google": "*",
-		"passport-oauth": "*"
+		"passport-nyu": "*"
 	},
 	"engines": {
 		"node": "0.8.x",
