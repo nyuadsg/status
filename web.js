@@ -6,6 +6,26 @@ var project = require('./routes/project');
 var passport = require('passport')
   , OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 
+OAuth2Strategy.prototype.userProfile = function(accessToken, done) {
+	done( null, {} );
+	this._oauth2.get('http://localhost:9080/visa/use/info/me', accessToken, function (err, body, res) {
+		if (err) { return done(err); }
+
+		try {
+			var json = JSON.parse(body);
+						
+			var profile = { netID: json.netID };
+
+			profile._raw = body;
+			profile._json = json;
+
+			done(null, profile);
+		} catch(e) {
+			done(e);
+		}
+	});
+}
+
 // prepare database
 var mongoose = require('mongoose');
 mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test');
@@ -31,6 +51,8 @@ app.configure(function(){
 	app.use(express.methodOverride());
 	app.use(express.cookieParser( process.env.SECRET ));
 	app.use(express.session({ key: 'status.sess', secret: process.env.SECRET }));
+	app.use(passport.initialize());
+	app.use(passport.session());
 	app.use(app.router);
 	app.use(require('stylus').middleware(__dirname + '/public'));
 	app.use(express.static(__dirname + '/public'));
@@ -46,18 +68,31 @@ app.get('/', project.list);
 app.get('/projects', project.list);
 app.post('/project/:slug/update', project.update);
 
+// authentication with passport
+passport.serializeUser(function(user, done) {
+	done(null, user.token);
+});
+
+passport.deserializeUser(function(token, done) {
+	done(null, token);
+});
+
 // oauth
 passport.use('nyu-passport', new OAuth2Strategy({
 	authorizationURL: 'http://localhost:9080/visa/oauth/authorize',
 	tokenURL: 'http://localhost:9080/visa/oauth/token',
-	clientID: 'abc123',
-	clientSecret: 'ssh-secret',
+	clientID: process.env.PASSPORT_ID,
+	clientSecret: process.env.PASSPORT_SECRET,
 	callbackURL: process.env.BASE_URL + '/auth/provider/callback'
 	},
 	function(accessToken, refreshToken, profile, done) {
-		console.log( accessToken, profile );
+		user = {
+			token: accessToken,
+			netID: profile.netID
+		}
+		done(null, user);
 	}
-)); // zMMFz4HuUtxJu6i24ZQ4gp6PDp8kQ5IN6b2LNHzZ3nQ115rEH9jkZryqZvQyfzZlFWsjXAD7JHrG0p81O9Xg38QxVfRY7jUHc1YMdiCGsfERSXGCFJsatiPEnxXt7qfluVWN4Pdc9OsxqNplKq8PdebyD8eZOL7K2g3vVu3Oc64Mkr6pzTs0VmnqjTOJNgVBugoOPTKZDyzjZ8wMr6i3IlCeTUNUzTNEEs1TIwktAruXPAXAQsrrUpLD0GzdZg4e
+));
 
 // google auth
 app.get('/auth/provider', passport.authenticate('nyu-passport'));
@@ -67,7 +102,7 @@ app.get('/auth/provider', passport.authenticate('nyu-passport'));
 // token.  If authorization was granted, the user will be logged in.
 // Otherwise, authentication has failed.
 app.get('/auth/provider/callback', 
-	passport.authenticate('nyu-passport', { successRedirect: '/', failureRedirect: '/login' }));
+	passport.authenticate('nyu-passport', { successRedirect: '/', failureRedirect: '/auth/provider' }));
 
 // start listening
 var port = process.env.PORT || 5000;
