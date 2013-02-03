@@ -1,5 +1,12 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	h1= title
+	p
+		| Welcome to the <strong>Research &amp; Development Committee</strong> of Student Government.
+		| We are committed to proving valuable services for improving the welfare of students at <a href="http://nyuad.nyu.edu">NYU Abu Dhabi</a>.
+		| If you are interested in our progress or contributing to our mission, please explore this site.
+	ul
+		each page in pages
+			li
+				a(href=page.url)=page.title

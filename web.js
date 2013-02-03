@@ -2,7 +2,8 @@
 var express = require('express')
 	, http = require('http')
 	, path = require('path');
-var project = require('./routes/project');
+var project = require('./routes/project')
+	, documents = require('./routes/documents');
 var passport = require('passport')
   , NYUPassportStrategy = require('passport-nyu').Strategy;
 
@@ -44,10 +45,12 @@ app.configure('development', function(){
 });
 
 // all routes
-app.get('/', project.list);
+app.get('/', documents.index);
 app.get('/projects', project.list);
 app.get('/projects/edit', project.edit);
 app.post('/project/:slug/update', project.update);
+app.get('/documents', documents.list)
+app.get('/documents/:slug', documents.view)
 
 // authentication with passport
 passport.serializeUser(function(user, done) {
