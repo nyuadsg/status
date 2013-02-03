@@ -47,10 +47,9 @@ app.configure('development', function(){
 // all routes
 app.get('/', documents.index);
 app.get('/projects', project.list);
-app.get('/projects/edit', project.edit);
+// app.get('/projects/edit', project.edit);
 app.post('/project/:slug/update', project.update);
-app.get('/documents', documents.list)
-app.get('/documents/:slug', documents.view)
+app.get('/document/:slug', documents.view)
 
 // authentication with passport
 passport.serializeUser(function(user, done) {

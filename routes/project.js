@@ -1,9 +1,14 @@
 var Project = require('../models/project');
 
 exports.update = function(req, res){
+	data = JSON.pares( req.body.payload );
+	
 	Project.findOneAndUpdate(
 		{slug: req.params.slug},
-		{update: new Date().getTime()},
+		{
+			update: new Date().getTime(),
+			repository: data.repository.url
+		},
 		{upsert: true},
 		function( err, project ) {
 			if( err )
