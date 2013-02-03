@@ -1,7 +1,9 @@
 var Project = require('../models/project');
 
 exports.update = function(req, res){
-	data = JSON.pares( req.body.payload );
+	data = JSON.parse( req.body.payload );
+	
+	console.log( data );
 	
 	Project.findOneAndUpdate(
 		{slug: req.params.slug},
@@ -11,6 +13,7 @@ exports.update = function(req, res){
 		},
 		{upsert: true},
 		function( err, project ) {
+			console.log( project );
 			if( err )
 			{
 				res.send( 'error' );

@@ -2,9 +2,10 @@ extends layout
 
 block content
 	h1= title
-	p Here is the current status of all projects.
+	p Here is the current status of all projects. Click the project to view it and find out more.
 	ul
 		each project in projects
 			li
-				h5= project.slug
+				h5
+					a(href=project.repository)=project.slug
 				h6= project.status

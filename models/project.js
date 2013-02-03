@@ -2,8 +2,9 @@
 var mongoose = require('mongoose');
 
 var projectSchema = mongoose.Schema({
-    slug: String,
-	update: Number
+	slug: String,
+	update: Number,
+	repository: String
 });
 
 projectSchema.virtual('status').get(function () {
